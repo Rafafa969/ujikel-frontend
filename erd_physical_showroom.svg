@@ -1,0 +1,465 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="100%" height="100%" style="background-color: #08080a;">
+  <defs>
+    <!-- Outfit Font Import -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap');
+      
+      .svg-title { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; fill: #ffffff; letter-spacing: 0.5px; }
+      .svg-subtitle { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 400; fill: #64748b; }
+      
+      .table-card { fill: #0f0f13; stroke: #1e293b; stroke-width: 1.5; rx: 12; ry: 12; }
+      .table-card:hover { stroke: #3b82f6; filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.15)); }
+      
+      .header-users { fill: url(#grad-users); }
+      .header-pelanggan { fill: url(#grad-pelanggan); }
+      .header-cart { fill: url(#grad-cart); }
+      .header-cartitem { fill: url(#grad-cartitem); }
+      .header-products { fill: url(#grad-products); }
+      .header-orders { fill: url(#grad-orders); }
+      .header-orderdetails { fill: url(#grad-orderdetails); }
+      .header-payment { fill: url(#grad-payment); }
+      
+      .table-title { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; fill: #ffffff; letter-spacing: 0.5px; }
+      
+      .col-pk { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700; fill: #fbbf24; }
+      .col-fk { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700; fill: #38bdf8; }
+      .col-uk { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700; fill: #c084fc; }
+      .col-name { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; fill: #e2e8f0; }
+      .col-type { font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 400; fill: #64748b; }
+      
+      .rel-line { stroke: #38bdf8; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .rel-line-sec { stroke: #a855f7; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .rel-line-trans { stroke: #ef4444; stroke-width: 2; fill: none; stroke-linecap: round; }
+      
+      .symbol-line { stroke: #e2e8f0; stroke-width: 2; fill: none; }
+      .symbol-circle { fill: #08080a; stroke: #e2e8f0; stroke-width: 2; }
+      
+      .legend-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; }
+      .legend-text { font-family: 'Outfit', sans-serif; font-size: 12px; fill: #94a3b8; }
+    </style>
+
+    <!-- Gradients for Card Headers -->
+    <linearGradient id="grad-users" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e40af" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="grad-pelanggan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="grad-cart" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7e22ce" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="grad-cartitem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="grad-products" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="grad-orders" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dc2626" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="grad-orderdetails" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b91c1c" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="grad-payment" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"/>
+    </linearGradient>
+
+    <!-- Subtle Grid Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1" opacity="0.15"/>
+    </pattern>
+
+    <!-- Gaussian Blur filter for backgrounds glows -->
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="70"/>
+    </filter>
+  </defs>
+
+  <!-- Background Grid -->
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Background Ambient Glows -->
+  <circle cx="280" cy="200" r="180" fill="#2563eb" opacity="0.07" filter="url(#blur)"/>
+  <circle cx="880" cy="200" r="180" fill="#7e22ce" opacity="0.07" filter="url(#blur)"/>
+  <circle cx="520" cy="600" r="180" fill="#dc2626" opacity="0.07" filter="url(#blur)"/>
+  <circle cx="1160" cy="500" r="180" fill="#059669" opacity="0.07" filter="url(#blur)"/>
+
+  <!-- TITLE & SUBTITLE -->
+  <g transform="translate(80, 60)">
+    <text class="svg-title" x="0" y="0">SHOWROOM MOTOR - PHYSICAL ERD</text>
+    <text class="svg-subtitle" x="0" y="22">Physical/Relational Database Schema (Crow's Foot Notation) | MySQL &amp; Prisma ORM Mapping</text>
+  </g>
+
+  <!-- ==================== RELATIONSHIP LINES (CROW'S FOOT) ==================== -->
+
+  <!-- 1. Users ||--o| Pelanggan (Horizontal: Users Left X=400 to Pelanggan Right X=320, Y=195) -->
+  <line class="rel-line" x1="320" y1="195" x2="400" y2="195" />
+  <!-- Users end (||): vertical lines at 388, 392 -->
+  <line class="symbol-line" x1="388" y1="187" x2="388" y2="203" />
+  <line class="symbol-line" x1="392" y1="187" x2="392" y2="203" />
+  <!-- Pelanggan end (o|): circle at 334, vertical line at 326 -->
+  <circle class="symbol-circle" cx="334" cy="195" r="4" />
+  <line class="symbol-line" x1="326" y1="187" x2="326" y2="203" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="338" y="190">has_profile</text>
+
+
+  <!-- 2. Users ||--|| Cart (Horizontal: Users Right X=640 to Cart Left X=720, Y=175) -->
+  <line class="rel-line-sec" x1="640" y1="175" x2="720" y2="175" />
+  <!-- Users end (||): vertical lines at 648, 652 -->
+  <line class="symbol-line" x1="648" y1="167" x2="648" y2="183" />
+  <line class="symbol-line" x1="652" y1="167" x2="652" y2="183" />
+  <!-- Cart end (||): vertical lines at 708, 712 -->
+  <line class="symbol-line" x1="708" y1="167" x2="708" y2="183" />
+  <line class="symbol-line" x1="712" y1="167" x2="712" y2="183" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="668" y="170">owns</text>
+
+
+  <!-- 3. Users ||--o{ Orders (Vertical: Users Bottom X=520, Y=290 to Orders Top X=520, Y=500) -->
+  <line class="rel-line-trans" x1="520" y1="290" x2="520" y2="500" />
+  <!-- Users end (||): horiz lines at 298, 302 -->
+  <line class="symbol-line" x1="512" y1="298" x2="528" y2="298" />
+  <line class="symbol-line" x1="512" y1="302" x2="528" y2="302" />
+  <!-- Orders end (o{): circle at Y=484, crow's foot branches pointing down -->
+  <circle class="symbol-circle" cx="520" cy="484" r="4" />
+  <line class="symbol-line" x1="520" y1="488" x2="520" y2="500" />
+  <line class="symbol-line" x1="520" y1="488" x2="512" y2="500" />
+  <line class="symbol-line" x1="520" y1="488" x2="528" y2="500" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="525" y="380">places</text>
+
+
+  <!-- 4. Cart ||--o{ CartItem (Horizontal: Cart Right X=960 to CartItem Left X=1040, Y=175) -->
+  <line class="rel-line-sec" x1="960" y1="175" x2="1040" y2="175" />
+  <!-- Cart end (||): vertical lines at 968, 972 -->
+  <line class="symbol-line" x1="968" y1="167" x2="968" y2="183" />
+  <line class="symbol-line" x1="972" y1="167" x2="972" y2="183" />
+  <!-- CartItem end (o{): circle at X=1024, crow's foot pointing right -->
+  <circle class="symbol-circle" cx="1024" cy="175" r="4" />
+  <line class="symbol-line" x1="1020" y1="175" x2="1040" y2="175" />
+  <line class="symbol-line" x1="1020" y1="175" x2="1032" y2="167" />
+  <line class="symbol-line" x1="1020" y1="175" x2="1032" y2="183" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="980" y="170">contains</text>
+
+
+  <!-- 5. Products ||--o{ CartItem (Vertical: Products Top X=1160, Y=450 to CartItem Bottom X=1160, Y=270) -->
+  <line class="rel-line-sec" x1="1160" y1="270" x2="1160" y2="450" />
+  <!-- Products end (||): horiz lines at 442, 438 -->
+  <line class="symbol-line" x1="1152" y1="442" x2="1168" y2="442" />
+  <line class="symbol-line" x1="1152" y1="438" x2="1168" y2="438" />
+  <!-- CartItem end (o{): circle at Y=286, crow's foot pointing up -->
+  <circle class="symbol-circle" cx="1160" cy="286" r="4" />
+  <line class="symbol-line" x1="1160" y1="282" x2="1160" y2="270" />
+  <line class="symbol-line" x1="1160" y1="282" x2="1152" y2="270" />
+  <line class="symbol-line" x1="1160" y1="282" x2="1168" y2="270" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="1165" y="370">added_to</text>
+
+
+  <!-- 6. Orders ||--|{ OrderDetails (Horizontal: Orders Right X=640 to OrderDetails Left X=720, Y=575) -->
+  <line class="rel-line-trans" x1="640" y1="575" x2="720" y2="575" />
+  <!-- Orders end (||): vertical lines at 648, 652 -->
+  <line class="symbol-line" x1="648" y1="567" x2="648" y2="583" />
+  <line class="symbol-line" x1="652" y1="567" x2="652" y2="583" />
+  <!-- OrderDetails end (|{): vertical line at 704, crow's foot pointing right -->
+  <line class="symbol-line" x1="704" y1="567" x2="704" y2="583" />
+  <line class="symbol-line" x1="704" y1="575" x2="720" y2="575" />
+  <line class="symbol-line" x1="704" y1="575" x2="712" y2="567" />
+  <line class="symbol-line" x1="704" y1="575" x2="712" y2="583" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="662" y="570">comprises</text>
+
+
+  <!-- 7. Products ||--o{ OrderDetails (Horizontal: Products Left X=1040 to OrderDetails Right X=960, Y=575) -->
+  <line class="rel-line-sec" x1="960" y1="575" x2="1040" y2="575" />
+  <!-- Products end (||): vertical lines at 1032, 1028 -->
+  <line class="symbol-line" x1="1032" y1="567" x2="1032" y2="583" />
+  <line class="symbol-line" x1="1028" y1="567" x2="1028" y2="583" />
+  <!-- OrderDetails end (o{): circle at X=976, crow's foot pointing left -->
+  <circle class="symbol-circle" cx="976" cy="575" r="4" />
+  <line class="symbol-line" x1="980" y1="575" x2="960" y2="575" />
+  <line class="symbol-line" x1="980" y1="575" x2="968" y2="567" />
+  <line class="symbol-line" x1="980" y1="575" x2="968" y2="583" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="984" y="570">ordered_in</text>
+
+
+  <!-- 8. Orders ||--o| Payment (Horizontal: Orders Left X=400 to Payment Right X=320, Y=565) -->
+  <line class="rel-line-trans" x1="320" y1="565" x2="400" y2="565" />
+  <!-- Orders end (||): vertical lines at 388, 392 -->
+  <line class="symbol-line" x1="388" y1="557" x2="388" y2="573" />
+  <line class="symbol-line" x1="392" y1="557" x2="392" y2="573" />
+  <!-- Payment end (o|): circle at X=336, vertical line at 326 -->
+  <circle class="symbol-circle" cx="336" cy="565" r="4" />
+  <line class="symbol-line" x1="326" y1="557" x2="326" y2="573" />
+  <text font-family="Outfit" font-size="10" fill="#64748b" x="338" y="560">settled_by</text>
+
+
+  <!-- ==================== TABLE CARDS ==================== -->
+
+  <!-- CARD 1: Pelanggan (X=80, Y=120, W=240, H=150) -->
+  <g id="card-pelanggan">
+    <rect class="table-card" x="80" y="120" width="240" height="150" />
+    <path class="header-pelanggan" d="M 80 132 A 12 12 0 0 1 92 120 L 308 120 A 12 12 0 0 1 320 132 L 320 155 L 80 155 Z" />
+    <text class="table-title" x="95" y="142">Pelanggan</text>
+    
+    <text class="col-pk" x="95" y="172">PK</text>
+    <text class="col-name" x="140" y="172">id</text>
+    <text class="col-type" x="250" y="172">Int</text>
+    
+    <text class="col-fk" x="95" y="192">FK, UK</text>
+    <text class="col-name" x="140" y="192">userId</text>
+    <text class="col-type" x="250" y="192">Int</text>
+    
+    <text class="col-uk" x="95" y="212">UK</text>
+    <text class="col-name" x="140" y="212">nik</text>
+    <text class="col-type" x="250" y="212">String</text>
+    
+    <text class="col-name" x="140" y="232">alamat</text>
+    <text class="col-type" x="250" y="232">String</text>
+    
+    <text class="col-name" x="140" y="252">no_telp</text>
+    <text class="col-type" x="250" y="252">String</text>
+  </g>
+
+  <!-- CARD 2: Users (X=400, Y=120, W=240, H=170) -->
+  <g id="card-users">
+    <rect class="table-card" x="400" y="120" width="240" height="170" />
+    <path class="header-users" d="M 400 132 A 12 12 0 0 1 412 120 L 628 120 A 12 12 0 0 1 640 132 L 640 155 L 400 155 Z" />
+    <text class="table-title" x="415" y="142">Users</text>
+    
+    <text class="col-pk" x="415" y="172">PK</text>
+    <text class="col-name" x="460" y="172">id</text>
+    <text class="col-type" x="570" y="172">Int</text>
+    
+    <text class="col-name" x="460" y="192">name</text>
+    <text class="col-type" x="570" y="192">String</text>
+    
+    <text class="col-uk" x="415" y="212">UK</text>
+    <text class="col-name" x="460" y="212">email</text>
+    <text class="col-type" x="570" y="212">String</text>
+    
+    <text class="col-name" x="460" y="232">password</text>
+    <text class="col-type" x="570" y="232">String</text>
+    
+    <text class="col-name" x="460" y="252">role</text>
+    <text class="col-type" x="570" y="252">String</text>
+    
+    <text class="col-name" x="460" y="272">createdAt</text>
+    <text class="col-type" x="570" y="272">DateTime</text>
+  </g>
+
+  <!-- CARD 3: Cart (X=720, Y=120, W=240, H=110) -->
+  <g id="card-cart">
+    <rect class="table-card" x="720" y="120" width="240" height="110" />
+    <path class="header-cart" d="M 720 132 A 12 12 0 0 1 732 120 L 948 120 A 12 12 0 0 1 960 132 L 960 155 L 720 155 Z" />
+    <text class="table-title" x="735" y="142">Cart</text>
+    
+    <text class="col-pk" x="735" y="172">PK</text>
+    <text class="col-name" x="780" y="172">id</text>
+    <text class="col-type" x="890" y="172">Int</text>
+    
+    <text class="col-fk" x="735" y="192">FK, UK</text>
+    <text class="col-name" x="780" y="192">userId</text>
+    <text class="col-type" x="890" y="192">Int</text>
+    
+    <text class="col-name" x="780" y="212">createdAt</text>
+    <text class="col-type" x="890" y="212">DateTime</text>
+  </g>
+
+  <!-- CARD 4: CartItem (X=1040, Y=120, W=240, H=150) -->
+  <g id="card-cartitem">
+    <rect class="table-card" x="1040" y="120" width="240" height="150" />
+    <path class="header-cartitem" d="M 1040 132 A 12 12 0 0 1 1052 120 L 1268 120 A 12 12 0 0 1 1280 132 L 1280 155 L 1040 155 Z" />
+    <text class="table-title" x="1055" y="142">CartItem</text>
+    
+    <text class="col-pk" x="1055" y="172">PK</text>
+    <text class="col-name" x="1100" y="172">id</text>
+    <text class="col-type" x="1210" y="172">Int</text>
+    
+    <text class="col-fk" x="1055" y="192">FK</text>
+    <text class="col-name" x="1100" y="192">cartId</text>
+    <text class="col-type" x="1210" y="192">Int</text>
+    
+    <text class="col-fk" x="1055" y="212">FK</text>
+    <text class="col-name" x="1100" y="212">productId</text>
+    <text class="col-type" x="1210" y="212">Int</text>
+    
+    <text class="col-name" x="1100" y="232">qty</text>
+    <text class="col-type" x="1210" y="232">Int</text>
+    
+    <text class="col-name" x="1100" y="252">price</text>
+    <text class="col-type" x="1210" y="252">Float (Null)</text>
+  </g>
+
+  <!-- CARD 5: Payment (X=80, Y=500, W=240, H=130) -->
+  <g id="card-payment">
+    <rect class="table-card" x="80" y="500" width="240" height="130" />
+    <path class="header-payment" d="M 80 512 A 12 12 0 0 1 92 500 L 308 500 A 12 12 0 0 1 320 512 L 320 535 L 80 535 Z" />
+    <text class="table-title" x="95" y="522">Payment</text>
+    
+    <text class="col-pk" x="95" y="552">PK</text>
+    <text class="col-name" x="140" y="552">id</text>
+    <text class="col-type" x="250" y="552">Int</text>
+    
+    <text class="col-fk" x="95" y="572">FK, UK</text>
+    <text class="col-name" x="140" y="572">orderId</text>
+    <text class="col-type" x="250" y="572">Int</text>
+    
+    <text class="col-name" x="140" y="592">evidence</text>
+    <text class="col-type" x="250" y="592">String</text>
+    
+    <text class="col-name" x="140" y="612">status</text>
+    <text class="col-type" x="250" y="612">String</text>
+  </g>
+
+  <!-- CARD 6: Orders (X=400, Y=500, W=240, H=170) -->
+  <g id="card-orders">
+    <rect class="table-card" x="400" y="500" width="240" height="170" />
+    <path class="header-orders" d="M 400 512 A 12 12 0 0 1 412 500 L 628 500 A 12 12 0 0 1 640 512 L 640 535 L 400 535 Z" />
+    <text class="table-title" x="415" y="522">Orders</text>
+    
+    <text class="col-pk" x="415" y="552">PK</text>
+    <text class="col-name" x="460" y="552">id</text>
+    <text class="col-type" x="570" y="552">Int</text>
+    
+    <text class="col-fk" x="415" y="572">FK</text>
+    <text class="col-name" x="460" y="572">userId</text>
+    <text class="col-type" x="570" y="572">Int</text>
+    
+    <text class="col-uk" x="415" y="592">UK</text>
+    <text class="col-name" x="460" y="592">orderCode</text>
+    <text class="col-type" x="570" y="592">String</text>
+    
+    <text class="col-name" x="460" y="612">totalPrice</text>
+    <text class="col-type" x="570" y="612">Float</text>
+    
+    <text class="col-name" x="460" y="632">status</text>
+    <text class="col-type" x="570" y="632">String</text>
+    
+    <text class="col-name" x="460" y="652">createdAt</text>
+    <text class="col-type" x="570" y="652">DateTime</text>
+  </g>
+
+  <!-- CARD 7: OrderDetails (X=720, Y=500, W=240, H=150) -->
+  <g id="card-orderdetails">
+    <rect class="table-card" x="720" y="500" width="240" height="150" />
+    <path class="header-orderdetails" d="M 720 512 A 12 12 0 0 1 732 500 L 948 500 A 12 12 0 0 1 960 512 L 960 535 L 720 535 Z" />
+    <text class="table-title" x="735" y="522">OrderDetails</text>
+    
+    <text class="col-pk" x="735" y="552">PK</text>
+    <text class="col-name" x="780" y="552">id</text>
+    <text class="col-type" x="890" y="552">Int</text>
+    
+    <text class="col-fk" x="735" y="572">FK</text>
+    <text class="col-name" x="780" y="572">orderId</text>
+    <text class="col-type" x="890" y="572">Int</text>
+    
+    <text class="col-fk" x="735" y="592">FK</text>
+    <text class="col-name" x="780" y="592">productId</text>
+    <text class="col-type" x="890" y="592">Int</text>
+    
+    <text class="col-name" x="780" y="612">qty</text>
+    <text class="col-type" x="890" y="612">Int</text>
+    
+    <text class="col-name" x="780" y="632">price</text>
+    <text class="col-type" x="890" y="632">Float</text>
+  </g>
+
+  <!-- CARD 8: Products (X=1040, Y=450, W=240, H=190) -->
+  <g id="card-products">
+    <rect class="table-card" x="1040" y="450" width="240" height="190" />
+    <path class="header-products" d="M 1040 462 A 12 12 0 0 1 1052 450 L 1268 450 A 12 12 0 0 1 1280 462 L 1280 485 L 1040 485 Z" />
+    <text class="table-title" x="1055" y="472">Products</text>
+    
+    <text class="col-pk" x="1055" y="502">PK</text>
+    <text class="col-name" x="1100" y="502">id</text>
+    <text class="col-type" x="1210" y="502">Int</text>
+    
+    <text class="col-name" x="1100" y="522">name</text>
+    <text class="col-type" x="1210" y="522">String</text>
+    
+    <text class="col-name" x="1100" y="542">type</text>
+    <text class="col-type" x="1210" y="542">String</text>
+    
+    <text class="col-name" x="1100" y="562">price</text>
+    <text class="col-type" x="1210" y="562">Float</text>
+    
+    <text class="col-name" x="1100" y="582">stock</text>
+    <text class="col-type" x="1210" y="582">Int</text>
+    
+    <text class="col-name" x="1100" y="602">image</text>
+    <text class="col-type" x="1210" y="602">String (Null)</text>
+    
+    <text class="col-name" x="1100" y="622">description</text>
+    <text class="col-type" x="1210" y="622">Text (Null)</text>
+  </g>
+
+  <!-- ==================== LEGEND SECTION ==================== -->
+  <g transform="translate(80, 750)">
+    <!-- Legend box background -->
+    <rect x="0" y="0" width="1240" height="95" fill="#0f0f13" stroke="#1e293b" stroke-width="1.5" rx="10" ry="10" />
+    
+    <!-- Title -->
+    <text class="legend-title" x="25" y="30">LEGENDA RELASI &amp; NOTASI KUNCI (CROW'S FOOT NOTATION)</text>
+    
+    <!-- Columns/Indicators -->
+    <!-- PK / FK / UK indicators -->
+    <g transform="translate(25, 45)">
+      <text class="col-pk" x="0" y="15">PK</text>
+      <text class="legend-text" x="25" y="15">Primary Key (Kunci Utama Tabel)</text>
+      
+      <text class="col-fk" x="0" y="35">FK</text>
+      <text class="legend-text" x="25" y="35">Foreign Key (Kunci Tamu / Penghubung Antartabel)</text>
+      
+      <text class="col-uk" x="0" y="55">UK</text>
+      <text class="legend-text" x="25" y="55">Unique Key (Nilai Kolom Unik / Tidak Boleh Sama)</text>
+    </g>
+
+    <!-- Crow's foot indicators -->
+    <g transform="translate(350, 45)">
+      <!-- Line 1: One and only one -->
+      <line class="rel-line" x1="0" y1="12" x2="60" y2="12" />
+      <line class="symbol-line" x1="45" y1="4" x2="45" y2="20" />
+      <line class="symbol-line" x1="50" y1="4" x2="50" y2="20" />
+      <text class="legend-text" x="80" y="15">One and Only One (Tepat Satu)</text>
+
+      <!-- Line 2: Zero or One -->
+      <line class="rel-line" x1="0" y1="42" x2="60" y2="42" />
+      <circle class="symbol-circle" cx="48" cy="42" r="4" />
+      <line class="symbol-line" x1="40" y1="34" x2="40" y2="50" />
+      <text class="legend-text" x="80" y="45">Zero or One (Nol atau Satu)</text>
+    </g>
+
+    <g transform="translate(680, 45)">
+      <!-- Line 3: One or Many -->
+      <line class="rel-line" x1="0" y1="12" x2="60" y2="12" />
+      <line class="symbol-line" x1="45" y1="4" x2="45" y2="20" />
+      <line class="symbol-line" x1="45" y1="12" x2="60" y2="12" />
+      <line class="symbol-line" x1="45" y1="12" x2="54" y2="4" />
+      <line class="symbol-line" x1="45" y1="12" x2="54" y2="20" />
+      <text class="legend-text" x="80" y="15">One or Many (Satu atau Banyak)</text>
+
+      <!-- Line 4: Zero or Many -->
+      <line class="rel-line" x1="0" y1="42" x2="60" y2="42" />
+      <circle class="symbol-circle" cx="38" cy="42" r="4" />
+      <line class="symbol-line" x1="42" y1="42" x2="60" y2="42" />
+      <line class="symbol-line" x1="42" y1="42" x2="52" y2="34" />
+      <line class="symbol-line" x1="42" y1="42" x2="52" y2="50" />
+      <text class="legend-text" x="80" y="45">Zero or Many (Nol atau Banyak)</text>
+    </g>
+
+    <g transform="translate(1010, 25)">
+      <rect x="0" y="0" width="200" height="55" fill="#1e293b" opacity="0.4" rx="6" ry="6" />
+      <!-- Relationship Color Codes -->
+      <circle cx="15" cy="18" r="5" fill="#38bdf8" />
+      <text font-family="Outfit" font-size="11" font-weight="600" fill="#e2e8f0" x="28" y="22">Relasi Akun &amp; Profil</text>
+      
+      <circle cx="15" cy="38" r="5" fill="#a855f7" />
+      <text font-family="Outfit" font-size="11" font-weight="600" fill="#e2e8f0" x="28" y="42">Relasi Keranjang Belanja</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="100%" height="100%" style="background-color: #ffffff;">
+  <!-- STYLES -->
+  <style>
+    .line { stroke: #64748b; stroke-width: 2; }
+    .line-bold { stroke: #334155; stroke-width: 3; }
+    .entity-rect { fill: #eff6ff; stroke: #2563eb; stroke-width: 2.5; rx: 6; ry: 6; }
+    .entity-text { font-family: 'Arial', sans-serif; font-size: 16; font-weight: bold; fill: #1e3a8a; text-anchor: middle; }
+    .relation-diamond { fill: #fdf2f8; stroke: #db2777; stroke-width: 2.5; }
+    .relation-text { font-family: 'Arial', sans-serif; font-size: 14; font-weight: bold; fill: #831843; text-anchor: middle; }
+    .attribute-oval { fill: #f8fafc; stroke: #64748b; stroke-width: 1.5; }
+    .attribute-text { font-family: 'Arial', sans-serif; font-size: 13; fill: #334155; text-anchor: middle; }
+    .key-oval { fill: #fffbeb; stroke: #d97706; stroke-width: 2; }
+    .key-text { font-family: 'Arial', sans-serif; font-size: 13; font-weight: bold; fill: #78350f; text-anchor: middle; text-decoration: underline; }
+    .cardinality { font-family: 'Arial', sans-serif; font-size: 15; font-weight: bold; fill: #0f172a; }
+  </style>
+
+  <!-- BACKGROUND GRID (SUBTLE) -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- HEADER TITLE -->
+  <text x="700" y="45" font-family="'Arial', sans-serif" font-size="24" font-weight="bold" fill="#0f172a" text-anchor="middle">DIAGRAM HUBUNGAN ENTITAS (ERD) - SHOWROOM MOTOR</text>
+  <text x="700" y="70" font-family="'Arial', sans-serif" font-size="14" fill="#64748b" text-anchor="middle">Notasi Chen (Conceptual Entity-Relationship Diagram)</text>
+
+  <!-- ==================== LINES (CONNECTORS) ==================== -->
+  
+  <!-- Pelanggan Attribute Connectors -->
+  <line class="line" x1="250" y1="200" x2="100" y2="100" />
+  <line class="line" x1="250" y1="200" x2="200" y2="80" />
+  <line class="line" x1="250" y1="200" x2="300" y2="80" />
+  <line class="line" x1="250" y1="200" x2="100" y2="300" />
+  <line class="line" x1="250" y1="200" x2="200" y2="320" />
+  <line class="line" x1="250" y1="200" x2="300" y2="300" />
+
+  <!-- Orders Attribute Connectors -->
+  <line class="line" x1="750" y1="200" x2="700" y2="80" />
+  <line class="line" x1="750" y1="200" x2="800" y2="80" />
+  <line class="line" x1="750" y1="200" x2="900" y2="120" />
+  <line class="line" x1="750" y1="200" x2="900" y2="200" />
+  <line class="line" x1="750" y1="200" x2="900" y2="280" />
+
+  <!-- Products Attribute Connectors -->
+  <line class="line" x1="750" y1="600" x2="700" y2="720" />
+  <line class="line" x1="750" y1="600" x2="800" y2="720" />
+  <line class="line" x1="750" y1="600" x2="900" y2="680" />
+  <line class="line" x1="750" y1="600" x2="900" y2="600" />
+  <line class="line" x1="750" y1="600" x2="900" y2="520" />
+  <line class="line" x1="750" y1="600" x2="900" y2="440" />
+
+  <!-- Payment Attribute Connectors -->
+  <line class="line" x1="250" y1="600" x2="100" y2="500" />
+  <line class="line" x1="250" y1="600" x2="150" y2="720" />
+  <line class="line" x1="250" y1="600" x2="280" y2="720" />
+
+  <!-- Membeli Relationship Attribute Connectors -->
+  <line class="line" x1="750" y1="400" x2="620" y2="400" />
+  <line class="line" x1="750" y1="400" x2="620" y2="460" />
+
+  <!-- Entity to Relationship Connectors -->
+  <line class="line-bold" x1="320" y1="200" x2="680" y2="200" /> <!-- Pelanggan - Melakukan - Orders -->
+  <line class="line-bold" x1="750" y1="230" x2="750" y2="570" /> <!-- Orders - Membeli - Products -->
+  <line class="line-bold" x1="710" y1="220" x2="290" y2="580" /> <!-- Orders - Dibayar - Payment -->
+
+  <!-- ==================== ATTRIBUTES (OVALS) ==================== -->
+
+  <!-- Pelanggan Attributes -->
+  <ellipse class="key-oval" cx="100" cy="100" rx="60" ry="25" />
+  <text class="key-text" x="100" y="104">id_user</text>
+
+  <ellipse class="attribute-oval" cx="200" cy="80" rx="55" ry="25" />
+  <text class="attribute-text" x="200" y="84">nama</text>
+
+  <ellipse class="attribute-oval" cx="300" cy="80" rx="55" ry="25" />
+  <text class="attribute-text" x="300" y="84">email</text>
+
+  <ellipse class="key-oval" cx="100" cy="300" rx="60" ry="25" />
+  <text class="key-text" x="100" y="304">nik</text>
+
+  <ellipse class="attribute-oval" cx="200" cy="320" rx="55" ry="25" />
+  <text class="attribute-text" x="200" y="324">alamat</text>
+
+  <ellipse class="attribute-oval" cx="300" cy="300" rx="55" ry="25" />
+  <text class="attribute-text" x="300" y="304">no_telp</text>
+
+  <!-- Orders Attributes -->
+  <ellipse class="key-oval" cx="700" cy="80" rx="60" ry="25" />
+  <text class="key-text" x="700" y="84">id_order</text>
+
+  <ellipse class="key-oval" cx="800" cy="80" rx="65" ry="25" />
+  <text class="key-text" x="800" y="84">order_code</text>
+
+  <ellipse class="attribute-oval" cx="900" cy="120" rx="65" ry="25" />
+  <text class="attribute-text" x="900" y="124">total_price</text>
+
+  <ellipse class="attribute-oval" cx="900" cy="200" rx="55" ry="25" />
+  <text class="attribute-text" x="900" y="204">status</text>
+
+  <ellipse class="attribute-oval" cx="900" cy="280" rx="60" ry="25" />
+  <text class="attribute-text" x="900" y="284">created_at</text>
+
+  <!-- Products Attributes -->
+  <ellipse class="key-oval" cx="700" cy="720" rx="65" ry="25" />
+  <text class="key-text" x="700" y="724">id_product</text>
+
+  <ellipse class="attribute-oval" cx="800" cy="720" rx="65" ry="25" />
+  <text class="attribute-text" x="800" y="724">nama_produk</text>
+
+  <ellipse class="attribute-oval" cx="900" cy="680" rx="60" ry="25" />
+  <text class="attribute-text" x="900" y="684">tipe_produk</text>
+
+  <ellipse class="attribute-oval" cx="900" cy="600" rx="55" ry="25" />
+  <text class="attribute-text" x="900" y="604">harga</text>
+
+  <ellipse class="attribute-oval" cx="900" cy="520" rx="55" ry="25" />
+  <text class="attribute-text" x="900" y="524">stok</text>
+
+  <ellipse class="attribute-oval" cx="900" cy="440" rx="55" ry="25" />
+  <text class="attribute-text" x="900" y="444">deskripsi</text>
+
+  <!-- Payment Attributes -->
+  <ellipse class="key-oval" cx="100" cy="500" rx="65" ry="25" />
+  <text class="key-text" x="100" y="504">id_payment</text>
+
+  <ellipse class="attribute-oval" cx="150" cy="720" rx="65" ry="25" />
+  <text class="attribute-text" x="150" y="724">bukti_transfer</text>
+
+  <ellipse class="attribute-oval" cx="280" cy="720" rx="75" ry="25" />
+  <text class="attribute-text" x="280" y="724">status_pembayaran</text>
+
+  <!-- Membeli (OrderDetails) Attributes -->
+  <ellipse class="attribute-oval" cx="620" cy="400" rx="50" ry="25" />
+  <text class="attribute-text" x="620" y="404">qty</text>
+
+  <ellipse class="attribute-oval" cx="620" cy="460" rx="55" ry="25" />
+  <text class="attribute-text" x="620" y="464">harga_beli</text>
+
+
+  <!-- ==================== RELATIONSHIPS (DIAMONDS) ==================== -->
+
+  <!-- Melakukan (Pelanggan - Orders) -->
+  <polygon class="relation-diamond" points="500,175 560,200 500,225 440,200" />
+  <text class="relation-text" x="500" y="205">Melakukan</text>
+
+  <!-- Membeli (Orders - Products) -->
+  <polygon class="relation-diamond" points="750,375 810,400 750,425 690,400" />
+  <text class="relation-text" x="750" y="405">Membeli</text>
+
+  <!-- Dibayar (Orders - Payment) -->
+  <polygon class="relation-diamond" points="500,375 560,400 500,425 440,400" />
+  <text class="relation-text" x="500" y="405">Dibayar</text>
+
+
+  <!-- ==================== ENTITIES (RECTANGLES) ==================== -->
+
+  <!-- Pelanggan Entity -->
+  <rect class="entity-rect" x="180" y="170" width="140" height="60" />
+  <text class="entity-text" x="250" y="206">Pelanggan</text>
+
+  <!-- Orders Entity -->
+  <rect class="entity-rect" x="680" y="170" width="140" height="60" />
+  <text class="entity-text" x="750" y="206">Orders</text>
+
+  <!-- Products Entity -->
+  <rect class="entity-rect" x="680" y="570" width="140" height="60" />
+  <text class="entity-text" x="750" y="606">Products</text>
+
+  <!-- Payment Entity -->
+  <rect class="entity-rect" x="180" y="570" width="140" height="60" />
+  <text class="entity-text" x="250" y="606">Payment</text>
+
+
+  <!-- ==================== CARDINALITY TEXT ==================== -->
+  
+  <!-- Pelanggan - Melakukan - Orders -->
+  <text class="cardinality" x="330" y="195">1</text>
+  <text class="cardinality" x="660" y="195">M</text>
+
+  <!-- Orders - Membeli - Products -->
+  <text class="cardinality" x="760" y="250">M</text>
+  <text class="cardinality" x="760" y="560">N</text>
+
+  <!-- Orders - Dibayar - Payment -->
+  <text class="cardinality" x="665" y="255">1</text>
+  <text class="cardinality" x="305" y="560">1</text>
+
+</svg>

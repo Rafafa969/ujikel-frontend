@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Showroom Motor - Database Interactive ERD Explorer</title>
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Mermaid.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+          },
+          boxShadow: {
+            'glow-red': '0 0 20px rgba(220, 38, 38, 0.15)',
+            'glow-blue': '0 0 20px rgba(59, 130, 246, 0.15)',
+            'glow-green': '0 0 20px rgba(34, 197, 94, 0.15)',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      background-color: #08080a;
+      color: #f3f4f6;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    /* Mermaid dark override */
+    .mermaid svg {
+      background-color: transparent !important;
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- GLOW EFFECTS -->
+  <div class="fixed top-0 left-1/4 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+  <!-- NAVIGATION HEADER -->
+  <header class="sticky top-0 z-40 bg-[#0f0f13]/80 backdrop-blur-md border-b border-white/5 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-600 text-white font-bold p-2.5 rounded-xl shadow-glow-red tracking-wider">
+          🏍️ ERD
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold text-white tracking-wide">SHOWROOM MOTOR</h1>
+          <p class="text-xs text-gray-400">Database Schema & ERD Interactive Explorer</p>
+        </div>
+      </div>
+      
+      <!-- TABS CONTROL -->
+      <div class="flex bg-black/40 p-1.5 rounded-xl border border-white/5">
+        <button id="btn-schema" onclick="switchTab('schema')" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-red-600 text-white shadow-md">
+          📂 Browser Tabel
+        </button>
+        <button id="btn-erd" onclick="switchTab('erd')" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+          📊 Diagram ERD
+        </button>
+        <button id="btn-logic" onclick="switchTab('logic')" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+          🧠 Logika Transaksi
+        </button>
+      </div>
+
+      <!-- PRINT/EXPORT -->
+      <div>
+        <button onclick="window.print()" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 text-xs font-semibold flex items-center gap-2 transition-all">
+          🖨️ Cetak / Ekspor PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 z-10 flex flex-col md:flex-row gap-6">
+
+    <!-- TAB 1: BROWSER TABEL (ACTIVE BY DEFAULT) -->
+    <div id="tab-schema" class="w-full flex flex-col md:flex-row gap-6 transition-all duration-300">
+      <!-- SIDEBAR: TABLES LIST -->
+      <div class="w-full md:w-64 flex-shrink-0 bg-[#0f0f13] border border-white/5 rounded-2xl p-4 h-fit">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-2">Daftar Tabel Database</h3>
+        <div id="sidebar-tables" class="space-y-1">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- TABLE DETAIL DISPLAY -->
+      <div class="flex-1 bg-[#0f0f13] border border-white/5 rounded-2xl p-6 flex flex-col gap-6">
+        <!-- Table Header Info -->
+        <div class="flex justify-between items-start border-b border-white/5 pb-4">
+          <div>
+            <div class="flex items-center gap-3">
+              <h2 id="current-table-name" class="text-2xl font-extrabold text-white tracking-wide">Tabel Name</h2>
+              <span id="current-table-pk-info" class="text-xs bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-bold">Auto Increment</span>
+            </div>
+            <p id="current-table-desc" class="text-sm text-gray-400 mt-2">Deskripsi tabel...</p>
+          </div>
+          <span class="text-xs bg-white/5 text-gray-400 border border-white/5 px-3 py-1.5 rounded-xl font-semibold">MySQL Table</span>
+        </div>
+
+        <!-- Columns Table -->
+        <div>
+          <h3 class="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2">
+            <span>📋</span> Struktur Kolom & Tipe Data
+          </h3>
+          <div class="overflow-x-auto rounded-xl border border-white/5 bg-black/20">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-white/5 border-b border-white/5 text-xs text-gray-400 uppercase font-semibold">
+                  <th class="p-3">Nama Kolom</th>
+                  <th class="p-3">Tipe Data</th>
+                  <th class="p-3">Kunci (Keys)</th>
+                  <th class="p-3">Nullability</th>
+                  <th class="p-3">Keterangan / Default</th>
+                </tr>
+              </thead>
+              <tbody id="current-table-columns-body" class="text-sm divide-y divide-white/5">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Relationships Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Relations In -->
+          <div class="bg-black/30 border border-white/5 rounded-xl p-4">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+              <span class="text-blue-500">↙️</span> Relasi Masuk (Foreign Keys)
+            </h4>
+            <div id="relations-in-list" class="space-y-2 text-sm text-gray-300">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Relations Out -->
+          <div class="bg-black/30 border border-white/5 rounded-xl p-4">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+              <span class="text-red-500">↗️</span> Relasi Keluar (Referenced By)
+            </h4>
+            <div id="relations-out-list" class="space-y-2 text-sm text-gray-300">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DIAGRAM ERD (HIDDEN BY DEFAULT) -->
+    <div id="tab-erd" class="w-full hidden bg-[#0f0f13] border border-white/5 rounded-2xl p-6 flex flex-col gap-6 transition-all duration-300">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-white tracking-wide">Diagram Hubungan Entitas (ERD)</h2>
+          <p class="text-sm text-gray-400 mt-1">Pilih notasi visual untuk dipresentasikan</p>
+          
+          <!-- SUB-TAB ERD TOGGLE -->
+          <div class="flex bg-black/40 p-1 rounded-lg border border-white/5 w-fit mt-3">
+            <button id="btn-sub-chen" onclick="switchSubErd('chen')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-red-600 text-white transition-all">
+              🎨 Notasi Chen (Konseptual)
+            </button>
+            <button id="btn-sub-crows" onclick="switchSubErd('crows')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-gray-400 hover:text-white transition-all">
+              👣 Crow's Foot (Fisikal/Tabel)
+            </button>
+          </div>
+        </div>
+        
+        <!-- LEGEND CARD (Only shown for Crow's Foot by default, will handle visibility via JS) -->
+        <div id="erd-legend" class="hidden bg-black/30 border border-white/5 p-3 rounded-xl text-xs space-y-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400 font-mono">||--||</span> <span class="text-gray-300">One-to-One (Pasti Satu ke Satu)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400 font-mono">||--o|</span> <span class="text-gray-300">One-to-Zero-or-One (Nol atau Satu)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400 font-mono">||--o{</span> <span class="text-gray-300">One-to-Many (Nol atau Banyak)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400 font-mono">||--|{</span> <span class="text-gray-300">One-to-Mandatory-Many (Harus Ada Banyak)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- SUB-CONTAINER 1: NOTASI CHEN (SVG) -->
+      <div id="container-erd-chen" class="bg-white border border-white/5 p-2 rounded-xl flex justify-center items-center overflow-x-auto min-h-[500px]">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" class="w-full max-w-5xl" style="background-color: #ffffff;">
+          <style>
+            .line { stroke: #64748b; stroke-width: 2; }
+            .line-bold { stroke: #334155; stroke-width: 3; }
+            .entity-rect { fill: #eff6ff; stroke: #2563eb; stroke-width: 2.5; rx: 6; ry: 6; }
+            .entity-text { font-family: 'Outfit', 'Arial', sans-serif; font-size: 16px; font-weight: bold; fill: #1e3a8a; text-anchor: middle; }
+            .relation-diamond { fill: #fdf2f8; stroke: #db2777; stroke-width: 2.5; }
+            .relation-text { font-family: 'Outfit', 'Arial', sans-serif; font-size: 14px; font-weight: bold; fill: #831843; text-anchor: middle; }
+            .attribute-oval { fill: #f8fafc; stroke: #64748b; stroke-width: 1.5; }
+            .attribute-text { font-family: 'Outfit', 'Arial', sans-serif; font-size: 13px; fill: #334155; text-anchor: middle; }
+            .key-oval { fill: #fffbeb; stroke: #d97706; stroke-width: 2; }
+            .key-text { font-family: 'Outfit', 'Arial', sans-serif; font-size: 13px; font-weight: bold; fill: #78350f; text-anchor: middle; text-decoration: underline; }
+            .cardinality { font-family: 'Outfit', 'Arial', sans-serif; font-size: 15px; font-weight: bold; fill: #0f172a; }
+          </style>
+          
+          <rect width="100%" height="100%" fill="#ffffff" />
+          
+          <!-- Connectors -->
+          <line class="line" x1="250" y1="200" x2="100" y2="100" />
+          <line class="line" x1="250" y1="200" x2="200" y2="80" />
+          <line class="line" x1="250" y1="200" x2="300" y2="80" />
+          <line class="line" x1="250" y1="200" x2="100" y2="300" />
+          <line class="line" x1="250" y1="200" x2="200" y2="320" />
+          <line class="line" x1="250" y1="200" x2="300" y2="300" />
+          
+          <line class="line" x1="750" y1="200" x2="700" y2="80" />
+          <line class="line" x1="750" y1="200" x2="800" y2="80" />
+          <line class="line" x1="750" y1="200" x2="900" y2="120" />
+          <line class="line" x1="750" y1="200" x2="900" y2="200" />
+          <line class="line" x1="750" y1="200" x2="900" y2="280" />
+          
+          <line class="line" x1="750" y1="600" x2="700" y2="720" />
+          <line class="line" x1="750" y1="600" x2="800" y2="720" />
+          <line class="line" x1="750" y1="600" x2="900" y2="680" />
+          <line class="line" x1="750" y1="600" x2="900" y2="600" />
+          <line class="line" x1="750" y1="600" x2="900" y2="520" />
+          <line class="line" x1="750" y1="600" x2="900" y2="440" />
+          
+          <line class="line" x1="250" y1="600" x2="100" y2="500" />
+          <line class="line" x1="250" y1="600" x2="150" y2="720" />
+          <line class="line" x1="250" y1="600" x2="280" y2="720" />
+          
+          <line class="line" x1="750" y1="400" x2="620" y2="400" />
+          <line class="line" x1="750" y1="400" x2="620" y2="460" />
+          
+          <line class="line-bold" x1="320" y1="200" x2="680" y2="200" />
+          <line class="line-bold" x1="750" y1="230" x2="750" y2="570" />
+          <line class="line-bold" x1="710" y1="220" x2="290" y2="580" />
+          
+          <!-- Attributes -->
+          <ellipse class="key-oval" cx="100" cy="100" rx="60" ry="25" />
+          <text class="key-text" x="100" y="104">id_user</text>
+          
+          <ellipse class="attribute-oval" cx="200" cy="80" rx="55" ry="25" />
+          <text class="attribute-text" x="200" y="84">nama</text>
+          
+          <ellipse class="attribute-oval" cx="300" cy="80" rx="55" ry="25" />
+          <text class="attribute-text" x="300" y="84">email</text>
+          
+          <ellipse class="key-oval" cx="100" cy="300" rx="60" ry="25" />
+          <text class="key-text" x="100" y="304">nik</text>
+          
+          <ellipse class="attribute-oval" cx="200" cy="320" rx="55" ry="25" />
+          <text class="attribute-text" x="200" y="324">alamat</text>
+          
+          <ellipse class="attribute-oval" cx="300" cy="300" rx="55" ry="25" />
+          <text class="attribute-text" x="300" y="304">no_telp</text>
+          
+          <ellipse class="key-oval" cx="700" cy="80" rx="60" ry="25" />
+          <text class="key-text" x="700" y="84">id_order</text>
+          
+          <ellipse class="key-oval" cx="800" cy="80" rx="65" ry="25" />
+          <text class="key-text" x="800" y="84">order_code</text>
+          
+          <ellipse class="attribute-oval" cx="900" cy="120" rx="65" ry="25" />
+          <text class="attribute-text" x="900" y="124">total_price</text>
+          
+          <ellipse class="attribute-oval" cx="900" cy="200" rx="55" ry="25" />
+          <text class="attribute-text" x="900" y="204">status</text>
+          
+          <ellipse class="attribute-oval" cx="900" cy="280" rx="60" ry="25" />
+          <text class="attribute-text" x="900" y="284">created_at</text>
+          
+          <ellipse class="key-oval" cx="700" cy="720" rx="65" ry="25" />
+          <text class="key-text" x="700" y="724">id_product</text>
+          
+          <ellipse class="attribute-oval" cx="800" cy="720" rx="65" ry="25" />
+          <text class="attribute-text" x="800" y="724">nama_produk</text>
+          
+          <ellipse class="attribute-oval" cx="900" cy="680" rx="60" ry="25" />
+          <text class="attribute-text" x="900" y="684">tipe_produk</text>
+          
+          <ellipse class="attribute-oval" cx="900" cy="600" rx="55" ry="25" />
+          <text class="attribute-text" x="900" y="604">harga</text>
+          
+          <ellipse class="attribute-oval" cx="900" cy="520" rx="55" ry="25" />
+          <text class="attribute-text" x="900" y="524">stok</text>
+          
+          <ellipse class="attribute-oval" cx="900" cy="440" rx="55" ry="25" />
+          <text class="attribute-text" x="900" y="444">deskripsi</text>
+          
+          <ellipse class="key-oval" cx="100" cy="500" rx="65" ry="25" />
+          <text class="key-text" x="100" y="504">id_payment</text>
+          
+          <ellipse class="attribute-oval" cx="150" cy="720" rx="65" ry="25" />
+          <text class="attribute-text" x="150" y="724">bukti_transfer</text>
+          
+          <ellipse class="attribute-oval" cx="280" cy="720" rx="75" ry="25" />
+          <text class="attribute-text" x="280" y="724">status_pembayaran</text>
+          
+          <ellipse class="attribute-oval" cx="620" cy="400" rx="50" ry="25" />
+          <text class="attribute-text" x="620" y="404">qty</text>
+          
+          <ellipse class="attribute-oval" cx="620" cy="460" rx="55" ry="25" />
+          <text class="attribute-text" x="620" y="464">harga_beli</text>
+          
+          <!-- Relationships -->
+          <polygon class="relation-diamond" points="500,175 560,200 500,225 440,200" />
+          <text class="relation-text" x="500" y="205">Melakukan</text>
+          
+          <polygon class="relation-diamond" points="750,375 810,400 750,425 690,400" />
+          <text class="relation-text" x="750" y="405">Membeli</text>
+          
+          <polygon class="relation-diamond" points="500,375 560,400 500,425 440,400" />
+          <text class="relation-text" x="500" y="405">Dibayar</text>
+          
+          <!-- Entities -->
+          <rect class="entity-rect" x="180" y="170" width="140" height="60" />
+          <text class="entity-text" x="250" y="206">Pelanggan</text>
+          
+          <rect class="entity-rect" x="680" y="170" width="140" height="60" />
+          <text class="entity-text" x="750" y="206">Orders</text>
+          
+          <rect class="entity-rect" x="680" y="570" width="140" height="60" />
+          <text class="entity-text" x="750" y="606">Products</text>
+          
+          <rect class="entity-rect" x="180" y="570" width="140" height="60" />
+          <text class="entity-text" x="250" y="606">Payment</text>
+          
+          <!-- Cardinality -->
+          <text class="cardinality" x="330" y="195">1</text>
+          <text class="cardinality" x="660" y="195">M</text>
+          <text class="cardinality" x="760" y="250">M</text>
+          <text class="cardinality" x="760" y="560">N</text>
+          <text class="cardinality" x="665" y="255">1</text>
+          <text class="cardinality" x="305" y="560">1</text>
+        </svg>
+      </div>
+
+      <!-- SUB-CONTAINER 2: NOTASI CROW'S FOOT (MERMAID) -->
+      <div id="container-erd-crows" class="hidden bg-black/30 border border-white/5 p-4 rounded-xl flex justify-center items-center overflow-x-auto min-h-[500px]">
+        <div class="mermaid w-full max-w-5xl" id="mermaid-erd-canvas">
+erDiagram
+    Users {
+        Int id PK "Auto Increment"
+        String name
+        String email UK
+        String password
+        String role
+        DateTime createdAt
+    }
+
+    Pelanggan {
+        Int id PK "Auto Increment"
+        Int userId FK "Unique"
+        String nik UK
+        String alamat
+        String no_telp
+    }
+
+    Products {
+        Int id PK "Auto Increment"
+        String name
+        String type
+        Float price
+        Int stock
+        String image
+        String description
+    }
+
+    Cart {
+        Int id PK "Auto Increment"
+        Int userId UK
+        DateTime createdAt
+    }
+
+    CartItem {
+        Int id PK "Auto Increment"
+        Int cartId FK
+        Int productId FK
+        Int qty
+        Float price
+    }
+
+    Orders {
+        Int id PK "Auto Increment"
+        Int userId FK
+        String orderCode UK
+        Float totalPrice
+        String status
+        DateTime createdAt
+    }
+
+    OrderDetails {
+        Int id PK "Auto Increment"
+        Int orderId FK
+        Int productId FK
+        Int qty
+        Float price
+    }
+
+    Payment {
+        Int id PK "Auto Increment"
+        Int orderId FK "Unique"
+        String evidence
+        String status
+    }
+
+    Users ||--o| Pelanggan : "has_profile"
+    Users ||--|| Cart : "owns"
+    Users ||--o{ Orders : "places"
+    Cart ||--o{ CartItem : "contains"
+    Products ||--o{ CartItem : "added_to"
+    Orders ||--|{ OrderDetails : "comprises"
+    Products ||--o{ OrderDetails : "ordered_in"
+    Orders ||--o| Payment : "settled_by"
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: LOGIKA TRANSAKSI (HIDDEN BY DEFAULT) -->
+    <div id="tab-logic" class="w-full hidden flex flex-col gap-6 transition-all duration-300">
+      <div class="bg-[#0f0f13] border border-white/5 rounded-2xl p-6">
+        <h2 class="text-2xl font-extrabold text-white tracking-wide border-b border-white/5 pb-4 mb-6">🧠 Analisis Logika Transaksi & Alur Hubungan Data</h2>
+        
+        <div class="space-y-6">
+          
+          <!-- STEP 1: REGISTRASI & PROFIL -->
+          <div class="bg-black/20 border border-white/5 rounded-xl p-5 flex flex-col md:flex-row gap-4">
+            <div class="w-12 h-12 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+              01
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Registrasi Pengguna & Pembuatan Profil</h3>
+              <p class="text-sm text-gray-400 mb-2">
+                Saat seseorang mendaftar akun di aplikasi, data masuk ke tabel <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Users</code>.
+              </p>
+              <ul class="list-disc list-inside text-sm text-gray-400 space-y-1 ml-2">
+                <li><strong class="text-gray-300">Konsep Profil:</strong> Akun bertipe <code class="text-gray-300 bg-white/5 px-1 py-0.2 rounded">CUSTOMER</code> harus mengisi data profil detail seperti NIK, nomor telepon, dan alamat yang tersimpan di tabel <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Pelanggan</code>.</li>
+                <li><strong class="text-gray-300">Mengapa Terpisah?</strong> Akun <code class="text-gray-300 bg-white/5 px-1 py-0.2 rounded">ADMIN</code> tidak memerlukan NIK/alamat rumah untuk mengelola dashboard showroom. Ini menghemat penyimpanan database dan memisahkan otentikasi (Users) dengan profil fisik (Pelanggan).</li>
+                <li><strong class="text-gray-300">Hubungan:</strong> Relasi <code class="text-gray-300 font-semibold font-mono">1:0..1</code> (One-to-Zero-or-One) terjamin karena kolom <code class="text-gray-300 bg-white/5 px-1 py-0.2 rounded">userId</code> di tabel Pelanggan bersifat <code class="text-amber-500 font-semibold">UNIQUE</code>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- STEP 2: KERANJANG BELANJA -->
+          <div class="bg-black/20 border border-white/5 rounded-xl p-5 flex flex-col md:flex-row gap-4">
+            <div class="w-12 h-12 bg-pink-500/10 text-pink-400 border border-pink-500/20 rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+              02
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Keranjang Belanja Sementara (Cart & CartItem)</h3>
+              <p class="text-sm text-gray-400 mb-2">
+                Sebelum melakukan checkout, pengguna memilih produk yang disimpan sementara.
+              </p>
+              <ul class="list-disc list-inside text-sm text-gray-400 space-y-1 ml-2">
+                <li><strong class="text-gray-300">Cart (Keranjang):</strong> Berfungsi sebagai wadah utama keranjang yang dimiliki secara unik oleh pengguna melalui relasi <code class="text-gray-300 font-semibold font-mono">1:1</code> ke <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Users</code>.</li>
+                <li><strong class="text-gray-300">CartItem (Item Keranjang):</strong> Karena user dapat menambahkan beberapa item motor/onderdil berbeda di satu keranjang, dibuat tabel relasi Many-to-Many <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">CartItem</code> yang menghubungkan <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Cart</code> dan <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Products</code>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- STEP 3: LOGIKA TRANSAKSI UTAMA (ORDERS & DETAIL) -->
+          <div class="bg-black/20 border border-white/5 rounded-xl p-5 flex flex-col md:flex-row gap-4 shadow-glow-red border-red-500/10">
+            <div class="w-12 h-12 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+              03
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Logika Transaksi Pembelian (Orders & OrderDetails)</h3>
+              <p class="text-sm text-gray-400 mb-2">
+                Bagian krusial yang harus dijelaskan secara logis kepada Guru Penguji:
+              </p>
+              
+              <div class="bg-[#15151c] border border-white/5 p-4 rounded-lg my-3 space-y-3">
+                <div class="flex gap-2">
+                  <span class="text-red-500">❌</span>
+                  <p class="text-xs text-gray-400"><strong class="text-red-400">Kasus Hubungan Langsung (Salah):</strong> Jika tabel <code class="text-red-400 bg-white/5 px-1 py-0.2 rounded">Orders</code> terhubung langsung ke <code class="text-red-400 bg-white/5 px-1 py-0.2 rounded">Products</code> (misal ada kolom <code class="text-red-400">productId</code> di tabel Orders), maka satu kode pesanan hanya bisa membeli **satu barang saja**. Ini salah besar di aplikasi e-commerce / showroom nyata.</p>
+                </div>
+                <div class="flex gap-2 border-t border-white/5 pt-3">
+                  <span class="text-green-500">✅</span>
+                  <p class="text-xs text-gray-400"><strong class="text-green-400">Kasus Tabel Perantara (Benar):</strong> Dibuat tabel perantara <code class="text-green-400 bg-white/5 px-1 py-0.2 rounded">OrderDetails</code> (Many-to-Many resolver). Satu pesanan (<code class="text-green-400">Orders</code>) memiliki banyak detail (<code class="text-green-400">OrderDetails</code>), di mana masing-masing baris detail menunjuk ke satu produk (<code class="text-green-400">Products</code>) lengkap dengan kuantitas (<code class="text-green-400">qty</code>) dan harga beku saat transaksi (<code class="text-green-400">price</code>).</p>
+                </div>
+              </div>
+
+              <ul class="list-disc list-inside text-sm text-gray-400 space-y-1 ml-2">
+                <li><strong class="text-gray-300">Pentingnya "Harga Beku" (Price Frozen):</strong> Nilai harga produk di tabel katalog dapat naik/turun kapan saja. Dengan menyimpan nilai harga di tabel <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">OrderDetails</code> pada waktu checkout, riwayat pembelian masa lalu aman dan nilai total tagihan tidak akan berubah walaupun harga produk di database diubah oleh admin di kemudian hari.</li>
+                <li><strong class="text-gray-300">Integritas Stok:</strong> Saat order checkout dibuat, stok di tabel <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Products</code> akan berkurang secara otomatis sesuai kuantitas yang dibeli melalui *Database Transaction* di backend. Jika pesanan dibatalkan (CANCELLED), stok dikembalikan (dikembalikan ke nilai semula).</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- STEP 4: PEMBAYARAN -->
+          <div class="bg-black/20 border border-white/5 rounded-xl p-5 flex flex-col md:flex-row gap-4">
+            <div class="w-12 h-12 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+              04
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Validasi Pembayaran Transaksi (Payment)</h3>
+              <p class="text-sm text-gray-400 mb-2">
+                Bagaimana pembayaran diselesaikan dan diverifikasi:
+              </p>
+              <ul class="list-disc list-inside text-sm text-gray-400 space-y-1 ml-2">
+                <li><strong class="text-gray-300">Hubungan One-to-One:</strong> Tabel <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Payment</code> terhubung langsung ke tabel <code class="text-indigo-400 bg-white/5 px-1.5 py-0.5 rounded">Orders</code> secara unik (<code class="text-gray-300 font-mono">1:0..1</code>). Hal ini karena setiap pesanan hanya memiliki satu tagihan pembayaran gabungan untuk seluruh produk yang dibeli.</li>
+                <li><strong class="text-gray-300">Alur Status:</strong> Pesanan pertama kali dibuat dengan status <code class="text-yellow-500 font-bold">PENDING</code>. Setelah customer mengunggah bukti transfer (disimpan di kolom <code class="text-gray-300 font-mono">evidence</code> tabel Payment), admin memvalidasi bukti. Jika valid, status berubah menjadi <code class="text-green-500 font-bold">PAID</code> (dan status pembayaran menjadi SUCCESS) lalu diproses ke <code class="text-blue-500 font-bold">COMPLETED</code> setelah motor diserahkan kepada customer.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#0f0f13] border-t border-white/5 p-6 text-center text-xs text-gray-500 z-10">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <p>© 2026 Showroom Motor Dealer | Generated by Antigravity</p>
+      <p class="text-gray-600">Database Engine: MySQL | ORM: Prisma</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // SOURCE OF TRUTH SCHEMA DATA
+    const schemaData = {
+      Users: {
+        name: 'Users',
+        desc: 'Menyimpan data otentikasi login akun pengguna, kata sandi terenkripsi, serta penentuan hak akses (role) sebagai admin atau customer.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'name', type: 'String', keys: [], nullable: 'NOT NULL', desc: 'Nama lengkap pengguna' },
+          { name: 'email', type: 'String', keys: ['UK'], nullable: 'NOT NULL', desc: 'Email aktif (Unique, digunakan untuk login)' },
+          { name: 'password', type: 'String', keys: [], nullable: 'NOT NULL', desc: 'Password akun terenkripsi Bcrypt' },
+          { name: 'role', type: 'String', keys: [], nullable: 'NOT NULL', desc: "Hak akses pengguna (DEFAULT: 'CUSTOMER', opsi: 'ADMIN')" },
+          { name: 'createdAt', type: 'DateTime', keys: [], nullable: 'NOT NULL', desc: 'Tanggal pembuatan akun (DEFAULT: CURRENT_TIMESTAMP)' }
+        ],
+        relationsIn: [],
+        relationsOut: [
+          { from: 'Users.id', to: 'Pelanggan.userId', type: 'One-to-Zero-or-One' },
+          { from: 'Users.id', to: 'Cart.userId', type: 'One-to-One' },
+          { from: 'Users.id', to: 'Orders.userId', type: 'One-to-Many' }
+        ]
+      },
+      Pelanggan: {
+        name: 'Pelanggan',
+        desc: 'Menyimpan profil fisik tambahan milik customer untuk kepengurusan dokumen STNK dan BPKB kendaraan motor.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'userId', type: 'Int', keys: ['FK', 'UK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Users(id), Unique' },
+          { name: 'nik', type: 'String', keys: ['UK'], nullable: 'NOT NULL', desc: 'Nomor Induk Kependudukan (KTP) 16 digit, Unique' },
+          { name: 'alamat', type: 'String', keys: [], nullable: 'NOT NULL', desc: 'Alamat lengkap tempat tinggal customer' },
+          { name: 'no_telp', type: 'String', keys: [], nullable: 'NOT NULL', desc: 'Nomor telepon aktif customer' }
+        ],
+        relationsIn: [
+          { from: 'Users.id', to: 'Pelanggan.userId', type: 'One-to-Zero-or-One' }
+        ],
+        relationsOut: []
+      },
+      Products: {
+        name: 'Products',
+        desc: 'Menyimpan daftar produk motor dan suku cadang (sparepart) yang ditawarkan oleh showroom lengkap dengan harga dan ketersediaan stok.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'name', type: 'String', keys: [], nullable: 'NOT NULL', desc: 'Nama produk motor / sparepart' },
+          { name: 'type', type: 'String', keys: [], nullable: 'NOT NULL', desc: "Jenis produk ('MOTOR' | 'SPAREPART')" },
+          { name: 'price', type: 'Float', keys: [], nullable: 'NOT NULL', desc: 'Harga dasar produk' },
+          { name: 'stock', type: 'Int', keys: [], nullable: 'NOT NULL', desc: 'Jumlah ketersediaan stok saat ini' },
+          { name: 'image', type: 'String', keys: [], nullable: 'NULL', desc: 'Path/filename gambar produk di direktori uploads' },
+          { name: 'description', type: 'Text', keys: [], nullable: 'NULL', desc: 'Deskripsi lengkap spesifikasi produk' }
+        ],
+        relationsIn: [],
+        relationsOut: [
+          { from: 'Products.id', to: 'CartItem.productId', type: 'One-to-Many' },
+          { from: 'Products.id', to: 'OrderDetails.productId', type: 'One-to-Many' }
+        ]
+      },
+      Cart: {
+        name: 'Cart',
+        desc: 'Menyimpan keranjang belanja aktif milik pengguna. Berfungsi sebagai penampung produk temporer sebelum transaksi dibeli.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'userId', type: 'Int', keys: ['FK', 'UK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Users(id), Unique' },
+          { name: 'createdAt', type: 'DateTime', keys: [], nullable: 'NOT NULL', desc: 'Tanggal keranjang dibuat (DEFAULT: CURRENT_TIMESTAMP)' }
+        ],
+        relationsIn: [
+          { from: 'Users.id', to: 'Cart.userId', type: 'One-to-One' }
+        ],
+        relationsOut: [
+          { from: 'Cart.id', to: 'CartItem.cartId', type: 'One-to-Many' }
+        ]
+      },
+      CartItem: {
+        name: 'CartItem',
+        desc: 'Menyimpan item-item produk yang dimasukkan ke dalam keranjang beserta jumlah (quantity) pemesanan sementara.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'cartId', type: 'Int', keys: ['FK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Cart(id)' },
+          { name: 'productId', type: 'Int', keys: ['FK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Products(id)' },
+          { name: 'qty', type: 'Int', keys: [], nullable: 'NOT NULL', desc: 'Jumlah barang yang dimasukkan' },
+          { name: 'price', type: 'Float', keys: [], nullable: 'NULL', desc: 'Harga produk pada saat dimasukkan ke keranjang' }
+        ],
+        relationsIn: [
+          { from: 'Cart.id', to: 'CartItem.cartId', type: 'One-to-Many' },
+          { from: 'Products.id', to: 'CartItem.productId', type: 'One-to-Many' }
+        ],
+        relationsOut: []
+      },
+      Orders: {
+        name: 'Orders',
+        desc: 'Tabel transaksi utama (header). Mencatat pembuat transaksi, kode pesanan acak, total tagihan belanja, status pesanan saat ini, dan waktu transaksi.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'userId', type: 'Int', keys: ['FK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Users(id)' },
+          { name: 'orderCode', type: 'String', keys: ['UK'], nullable: 'NOT NULL', desc: 'Kode transaksi acak unik (contoh: ORD-17178783)' },
+          { name: 'totalPrice', type: 'Float', keys: [], nullable: 'NOT NULL', desc: 'Total tagihan belanja (akumulasi qty * price di OrderDetails)' },
+          { name: 'status', type: 'String', keys: [], nullable: 'NOT NULL', desc: "Status pesanan ('PENDING' | 'PAID' | 'COMPLETED' | 'CANCELLED')" },
+          { name: 'createdAt', type: 'DateTime', keys: [], nullable: 'NOT NULL', desc: 'Waktu transaksi dibuat (DEFAULT: CURRENT_TIMESTAMP)' }
+        ],
+        relationsIn: [
+          { from: 'Users.id', to: 'Orders.userId', type: 'One-to-Many' }
+        ],
+        relationsOut: [
+          { from: 'Orders.id', to: 'OrderDetails.orderId', type: 'One-to-Mandatory-Many' },
+          { from: 'Orders.id', to: 'Payment.orderId', type: 'One-to-Zero-or-One' }
+        ]
+      },
+      OrderDetails: {
+        name: 'OrderDetails',
+        desc: 'Menyimpan rincian item barang yang dibeli pada satu transaksi. Berfungsi sebagai Many-to-Many resolver antara Orders dan Products, serta mengamankan nilai harga beli beku.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'orderId', type: 'Int', keys: ['FK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Orders(id)' },
+          { name: 'productId', type: 'Int', keys: ['FK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Products(id)' },
+          { name: 'qty', type: 'Int', keys: [], nullable: 'NOT NULL', desc: 'Jumlah barang yang dibeli' },
+          { name: 'price', type: 'Float', keys: [], nullable: 'NOT NULL', desc: 'Harga beku barang pada saat dibeli (untuk mencegah perubahan histori keuangan)' }
+        ],
+        relationsIn: [
+          { from: 'Orders.id', to: 'OrderDetails.orderId', type: 'One-to-Mandatory-Many' },
+          { from: 'Products.id', to: 'OrderDetails.productId', type: 'One-to-Many' }
+        ],
+        relationsOut: []
+      },
+      Payment: {
+        name: 'Payment',
+        desc: 'Menyimpan data bukti transaksi pembayaran berupa transfer bank yang dikirimkan oleh customer untuk kemudian diverifikasi admin.',
+        hasAutoIncrement: true,
+        columns: [
+          { name: 'id', type: 'Int', keys: ['PK'], nullable: 'NOT NULL', desc: 'Primary Key, Auto Increment' },
+          { name: 'orderId', type: 'Int', keys: ['FK', 'UK'], nullable: 'NOT NULL', desc: 'Foreign Key merujuk ke Orders(id), Unique' },
+          { name: 'evidence', type: 'String', keys: [], nullable: 'NOT NULL', desc: 'Nama file foto bukti transfer yang diunggah ke server' },
+          { name: 'status', type: 'String', keys: [], nullable: 'NOT NULL', desc: "Status verifikasi transfer ('PENDING' | 'SUCCESS' | 'REJECTED')" }
+        ],
+        relationsIn: [
+          { from: 'Orders.id', to: 'Payment.orderId', type: 'One-to-Zero-or-One' }
+        ],
+        relationsOut: []
+      }
+    };
+
+    // ACTIVE TAB STATE
+    let activeTab = 'schema';
+    let activeTable = 'Users';
+
+    // RENDER SIDEBAR TABLES
+    function renderSidebar() {
+      const container = document.getElementById('sidebar-tables');
+      container.innerHTML = '';
+      
+      Object.keys(schemaData).forEach(tableName => {
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-between group ${
+          tableName === activeTable 
+            ? 'bg-red-600/10 text-red-500 border border-red-500/20' 
+            : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+        }`;
+        
+        btn.onclick = () => selectTable(tableName);
+        
+        btn.innerHTML = `
+          <span class="flex items-center gap-2">
+            <span class="${tableName === activeTable ? 'text-red-500' : 'text-gray-500 group-hover:text-gray-300'}">📁</span>
+            ${tableName}
+          </span>
+          <span class="text-[10px] bg-white/5 group-hover:bg-white/10 text-gray-500 group-hover:text-gray-400 px-2 py-0.5 rounded-md font-mono">${schemaData[tableName].columns.length}</span>
+        `;
+        
+        container.appendChild(btn);
+      });
+    }
+
+    // SELECT A TABLE
+    function selectTable(tableName) {
+      activeTable = tableName;
+      renderSidebar();
+      renderTableDetails(tableName);
+    }
+
+    // RENDER TABLE DETAILS VIEW
+    function renderTableDetails(tableName) {
+      const tableInfo = schemaData[tableName];
+      
+      // Update Name & Desc
+      document.getElementById('current-table-name').innerText = tableInfo.name;
+      document.getElementById('current-table-desc').innerText = tableInfo.desc;
+      
+      // PK Tag
+      const pkTag = document.getElementById('current-table-pk-info');
+      pkTag.innerText = tableInfo.hasAutoIncrement ? 'Auto Increment' : 'No Auto Inc';
+      
+      // Update Columns Body
+      const tbody = document.getElementById('current-table-columns-body');
+      tbody.innerHTML = '';
+      
+      tableInfo.columns.forEach(col => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/[0.02] transition-colors';
+        
+        // Key badges
+        let keyHtml = '';
+        if (col.keys.includes('PK')) {
+          keyHtml += '<span class="text-[10px] bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2 py-0.5 rounded font-bold mr-1">PK</span>';
+        }
+        if (col.keys.includes('FK')) {
+          keyHtml += '<span class="text-[10px] bg-sky-500/10 text-sky-500 border border-sky-500/20 px-2 py-0.5 rounded font-bold mr-1">FK</span>';
+        }
+        if (col.keys.includes('UK')) {
+          keyHtml += '<span class="text-[10px] bg-purple-500/10 text-purple-500 border border-purple-500/20 px-2 py-0.5 rounded font-bold mr-1">UK</span>';
+        }
+        if (!keyHtml) {
+          keyHtml = '<span class="text-gray-600 font-mono">-</span>';
+        }
+
+        // Nullability
+        const isNull = col.nullable === 'NULL';
+        const nullHtml = isNull 
+          ? '<span class="text-xs text-gray-500">NULL</span>' 
+          : '<span class="text-xs text-red-400 font-semibold">NOT NULL</span>';
+
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-white font-mono">${col.name}</td>
+          <td class="p-3 text-gray-300 font-mono text-xs">${col.type}</td>
+          <td class="p-3">${keyHtml}</td>
+          <td class="p-3">${nullHtml}</td>
+          <td class="p-3 text-xs text-gray-400">${col.desc}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Update Relations In
+      const relInContainer = document.getElementById('relations-in-list');
+      relInContainer.innerHTML = '';
+      if (tableInfo.relationsIn.length === 0) {
+        relInContainer.innerHTML = '<p class="text-xs text-gray-500 italic">Tidak ada kunci tamu masuk.</p>';
+      } else {
+        tableInfo.relationsIn.forEach(rel => {
+          const div = document.createElement('div');
+          div.className = 'flex items-center justify-between bg-black/40 border border-white/5 px-3 py-2 rounded-lg';
+          
+          const sourceTable = rel.from.split('.')[0];
+          
+          div.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="text-sky-400 font-mono text-xs font-semibold">${rel.to.split('.')[1]}</span>
+              <span class="text-gray-500 text-xs">←</span>
+              <button onclick="selectTable('${sourceTable}')" class="text-xs text-white hover:text-red-500 font-semibold underline decoration-dashed transition-all">${rel.from}</button>
+            </div>
+            <span class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded font-mono">${rel.type}</span>
+          `;
+          relInContainer.appendChild(div);
+        });
+      }
+
+      // Update Relations Out
+      const relOutContainer = document.getElementById('relations-out-list');
+      relOutContainer.innerHTML = '';
+      if (tableInfo.relationsOut.length === 0) {
+        relOutContainer.innerHTML = '<p class="text-xs text-gray-500 italic">Tidak direferensikan oleh tabel lain.</p>';
+      } else {
+        tableInfo.relationsOut.forEach(rel => {
+          const div = document.createElement('div');
+          div.className = 'flex items-center justify-between bg-black/40 border border-white/5 px-3 py-2 rounded-lg';
+          
+          const destTable = rel.to.split('.')[0];
+          
+          div.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="text-red-400 font-mono text-xs font-semibold">${rel.from.split('.')[1]}</span>
+              <span class="text-gray-500 text-xs">→</span>
+              <button onclick="selectTable('${destTable}')" class="text-xs text-white hover:text-red-500 font-semibold underline decoration-dashed transition-all">${rel.to}</button>
+            </div>
+            <span class="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded font-mono">${rel.type}</span>
+          `;
+          relOutContainer.appendChild(div);
+        });
+      }
+    }
+
+    // SUB-ERD SWITCHER (CHEN vs CROWSFOOT)
+    function switchSubErd(type) {
+      const containerChen = document.getElementById('container-erd-chen');
+      const containerCrows = document.getElementById('container-erd-crows');
+      const legend = document.getElementById('erd-legend');
+      const btnChen = document.getElementById('btn-sub-chen');
+      const btnCrows = document.getElementById('btn-sub-crows');
+
+      if (type === 'chen') {
+        containerChen.classList.remove('hidden');
+        containerCrows.classList.add('hidden');
+        legend.classList.add('hidden');
+        
+        btnChen.className = 'px-3 py-1.5 rounded-md text-xs font-semibold bg-red-600 text-white transition-all';
+        btnCrows.className = 'px-3 py-1.5 rounded-md text-xs font-semibold text-gray-400 hover:text-white transition-all';
+      } else {
+        containerChen.classList.add('hidden');
+        containerCrows.classList.remove('hidden');
+        legend.classList.remove('hidden');
+        
+        btnChen.className = 'px-3 py-1.5 rounded-md text-xs font-semibold text-gray-400 hover:text-white transition-all';
+        btnCrows.className = 'px-3 py-1.5 rounded-md text-xs font-semibold bg-red-600 text-white transition-all';
+        
+        // Re-render mermaid
+        setTimeout(() => {
+          mermaid.contentLoaded();
+        }, 50);
+      }
+    }
+
+    // TAB SWITCHER
+    function switchTab(tabId) {
+      activeTab = tabId;
+      
+      const tabSchema = document.getElementById('tab-schema');
+      const tabErd = document.getElementById('tab-erd');
+      const tabLogic = document.getElementById('tab-logic');
+      
+      const btnSchema = document.getElementById('btn-schema');
+      const btnErd = document.getElementById('btn-erd');
+      const btnLogic = document.getElementById('btn-logic');
+
+      // Hide all tabs
+      tabSchema.classList.add('hidden');
+      tabErd.classList.add('hidden');
+      tabLogic.classList.add('hidden');
+      
+      // Reset button styles
+      [btnSchema, btnErd, btnLogic].forEach(btn => {
+        btn.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-gray-400 hover:text-white';
+      });
+
+      // Show selected tab & set active button style
+      if (tabId === 'schema') {
+        tabSchema.classList.remove('hidden');
+        btnSchema.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-red-600 text-white shadow-md';
+      } else if (tabId === 'erd') {
+        tabErd.classList.remove('hidden');
+        btnErd.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-red-600 text-white shadow-md';
+        // Initialize with default sub-tab 'chen'
+        switchSubErd('chen');
+      } else if (tabId === 'logic') {
+        tabLogic.classList.remove('hidden');
+        btnLogic.className = 'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-red-600 text-white shadow-md';
+      }
+    }
+
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      // Init Mermaid
+      mermaid.initialize({
+        theme: 'dark',
+        startOnLoad: true,
+        securityLevel: 'loose',
+        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+      });
+      
+      renderSidebar();
+      selectTable('Users');
+    });
+  </script>
+</body>
+</html>
